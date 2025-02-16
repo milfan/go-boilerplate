@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
+	rest_api "github.com/milfan/golang-gin/api/rest/api"
 	conf_app "github.com/milfan/golang-gin/configs/app_conf"
 	"github.com/milfan/golang-gin/internal/pkg/database/postgres"
 	"github.com/sirupsen/logrus"
@@ -35,4 +36,12 @@ func main() {
 			l.Printf("sql database %s successfuly closed.", dbName)
 		}
 	}(logger, conn.SqlDB, conn.Conn.Name())
+
+	restApiServer := rest_api.NewServer(
+		ginServer,
+		*conf.GetHttpConfig(),
+		*conn,
+		logger,
+	)
+	rest_api.StartServer(restApiServer)
 }
