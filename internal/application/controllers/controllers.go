@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	mobile_v1_controller "github.com/milfan/golang-gin/internal/application/controllers/mobile/v1"
-	web_v1_controller "github.com/milfan/golang-gin/internal/application/controllers/web/v1"
+	mobile_v1_controller "github.com/milfan/golang-gin/internal/application/controllers/v1/mobile"
+	web_v1_controller "github.com/milfan/golang-gin/internal/application/controllers/v1/web"
 )
 
 type (
