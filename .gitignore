@@ -1,0 +1,31 @@
+# Binaries for programs and plugins
+*.log
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+
+# Go workspace file
+go.work
+
+# Folders
+bin/
+tmp/
+logs
+/logs
+_obj
+_test
+
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+# Editor spesific
+.DS_Store
+.editorconfig
+.vscode/
+.idea
+
+# Air
+*.toml
