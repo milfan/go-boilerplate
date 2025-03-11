@@ -1,4 +1,4 @@
-package postgres
+package config_postgres
 
 import (
 	"database/sql"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	conf_app "github.com/milfan/golang-gin/configs/app_conf"
+	"github.com/milfan/go-boilerplate/configs/config"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -20,8 +20,8 @@ type Postgres struct {
 }
 
 func Connect(
-	postgresConf conf_app.PostgresConfig,
-	appConf conf_app.AppConfig,
+	postgresConf config.PostgresConfig,
+	appConf config.AppConfig,
 	logger *logrus.Logger,
 ) *Postgres {
 	dsn := fmt.Sprintf(

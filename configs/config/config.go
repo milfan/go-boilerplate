@@ -1,4 +1,4 @@
-package conf_app
+package config
 
 import (
 	"os"

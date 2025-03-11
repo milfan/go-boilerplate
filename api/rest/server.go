@@ -1,4 +1,4 @@
-package rest_api
+package api_rest
 
 import (
 	"context"
@@ -11,23 +11,24 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	rest_api_routes "github.com/milfan/golang-gin/api/rest/api/routes"
-	conf_app "github.com/milfan/golang-gin/configs/app_conf"
-	"github.com/milfan/golang-gin/internal/application/controllers"
-	"github.com/milfan/golang-gin/internal/pkg/database/postgres"
+	rest_routes "github.com/milfan/go-boilerplate/api/rest/routes"
+	web_routes_v1 "github.com/milfan/go-boilerplate/api/rest/routes/web/v1"
+	"github.com/milfan/go-boilerplate/configs/config"
+	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
+	api_controllers "github.com/milfan/go-boilerplate/internal/api/controllers"
 	"github.com/sirupsen/logrus"
 )
 
 func NewServer(
 	server *gin.Engine,
-	httpConf conf_app.HttpConfig,
-	postgresConn postgres.Postgres,
+	httpConf config.HttpConfig,
+	postgresConn config_postgres.Postgres,
 	logger *logrus.Logger,
 ) *http.Server {
+	apiControllers := api_controllers.LoanControllers()
 
-	controllers := controllers.LoadControllers()
-	rest_api_routes.DefaultRoute(server)
-	rest_api_routes.V1Route(server, logger, httpConf, controllers)
+	rest_routes.DefaultRoute(server)
+	web_routes_v1.WebRouteV1(server, apiControllers)
 
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%s", httpConf.GetPort()),

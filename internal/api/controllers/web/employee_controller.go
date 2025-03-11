@@ -1,4 +1,4 @@
-package web_v1_controller
+package web_controller
 
 import (
 	"net/http"
@@ -18,6 +18,6 @@ func (e *employeeController) Register(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "register!")
 }
 
-func NewEmployeeController() IEmployeeController {
+func newEmployeeController() IEmployeeController {
 	return &employeeController{}
 }
