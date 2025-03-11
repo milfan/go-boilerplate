@@ -1,4 +1,6 @@
-package web_controller
+package api_web_controller
+
+import api_usecases "github.com/milfan/go-boilerplate/internal/api/usecases"
 
 type (
 	WebControllers struct {
@@ -7,7 +9,9 @@ type (
 )
 
 func RegisterWebController() WebControllers {
+	loadUsecases := api_usecases.LoadUsecases()
+
 	return WebControllers{
-		EmployeeController: newEmployeeController(),
+		EmployeeController: newEmployeeController(loadUsecases.WebUsecases),
 	}
 }

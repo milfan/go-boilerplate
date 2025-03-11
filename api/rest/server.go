@@ -12,7 +12,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	rest_routes "github.com/milfan/go-boilerplate/api/rest/routes"
-	web_routes_v1 "github.com/milfan/go-boilerplate/api/rest/routes/web/v1"
 	"github.com/milfan/go-boilerplate/configs/config"
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
 	api_controllers "github.com/milfan/go-boilerplate/internal/api/controllers"
@@ -25,10 +24,10 @@ func NewServer(
 	postgresConn config_postgres.Postgres,
 	logger *logrus.Logger,
 ) *http.Server {
-	apiControllers := api_controllers.LoanControllers()
+	apiControllers := api_controllers.LoadControllers()
 
 	rest_routes.DefaultRoute(server)
-	web_routes_v1.WebRouteV1(server, apiControllers)
+	rest_routes.WebRouteV1(server, apiControllers)
 
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%s", httpConf.GetPort()),

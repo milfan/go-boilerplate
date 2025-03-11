@@ -1,23 +1,35 @@
-package web_controller
+package api_web_controller
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	api_web_usecases "github.com/milfan/go-boilerplate/internal/api/usecases/web"
 )
 
 type (
 	IEmployeeController interface {
 		Register(ctx *gin.Context)
 	}
-	employeeController struct{}
+	employeeController struct {
+		usecases api_web_usecases.WebUsecases
+	}
 )
 
 // Register implements IEmployeeController.
-func (e *employeeController) Register(ctx *gin.Context) {
+func (c *employeeController) Register(ctx *gin.Context) {
+
+	err := c.usecases.EmployeeUsecases.Register(ctx.Request.Context())
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+	}
 	ctx.JSON(http.StatusOK, "register!")
 }
 
-func newEmployeeController() IEmployeeController {
-	return &employeeController{}
+func newEmployeeController(
+	usecases api_web_usecases.WebUsecases,
+) IEmployeeController {
+	return &employeeController{
+		usecases: usecases,
+	}
 }

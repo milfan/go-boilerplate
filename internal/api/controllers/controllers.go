@@ -8,7 +8,8 @@ type (
 	}
 )
 
-func LoanControllers() Controllers {
+func LoadControllers() Controllers {
+
 	return Controllers{
 		WebControllers: web_controller.RegisterWebController(),
 	}
