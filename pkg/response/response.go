@@ -54,7 +54,7 @@ func (r *response) HttpError(ctx *gin.Context, err error) {
 
 	// get request id from middleware
 	getRequestID, _ := ctx.Get(pkg_constants.REQUEST_ID)
-	requestID := ""
+	var requestID string
 	if getRequestID != nil {
 		requestID = getRequestID.(string)
 	}
