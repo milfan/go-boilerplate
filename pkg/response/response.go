@@ -37,7 +37,7 @@ type IResponse interface {
 
 type response struct{}
 
-// BuildMeta implements IResponseClient.
+// BuildMeta implements IResponse.
 func (r *response) BuildMeta(page int, perPage int, count int64) *Meta {
 	x := math.Ceil(float64(count) / float64(perPage))
 	totalPage := int(x)
@@ -49,7 +49,7 @@ func (r *response) BuildMeta(page int, perPage int, count int64) *Meta {
 	}
 }
 
-// HttpError implements IResponseClient.
+// HttpError implements IResponse.
 func (r *response) HttpError(ctx *gin.Context, err error) {
 
 	// get request id from middleware
@@ -78,7 +78,7 @@ func (r *response) HttpError(ctx *gin.Context, err error) {
 	ctx.Abort()
 }
 
-// HttpJSON implements IResponseClient.
+// HttpJSON implements IResponse.
 func (r *response) HttpJSON(ctx *gin.Context, message string, data interface{}, meta *Meta) {
 
 	response := ResponseMessage{
