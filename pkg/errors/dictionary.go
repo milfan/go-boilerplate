@@ -8,10 +8,8 @@ type ErrDicts struct {
 	Errors map[string]*Error
 }
 
-func RegisterDicts(
-	errCodes map[string]*Error,
-) *ErrDicts {
-	return &ErrDicts{
+func RegisterDicts(errCodes map[string]*Error) {
+	errorDicts = &ErrDicts{
 		Errors: errCodes,
 	}
 }

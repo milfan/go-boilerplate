@@ -42,10 +42,10 @@ type (
 // Error implements IErrors.
 func (g *pkgError) Error(commonErrCode string, traceErrorMessage error) *Error {
 
-	errDicts := errorDicts.Errors[commonErrCode]
+	dictionaries := errorDicts.Errors[commonErrCode]
 
 	// to check if error in not listed
-	if errDicts == nil {
+	if dictionaries == nil {
 		return &Error{
 			ClientMessage: "Unknown error", // this unknown client message if the error not registered
 			ErrorCode:     commonErrCode,
@@ -55,10 +55,10 @@ func (g *pkgError) Error(commonErrCode string, traceErrorMessage error) *Error {
 	}
 
 	return &Error{
-		ClientMessage: errDicts.ClientMessage,
-		ErrorCode:     errDicts.ErrorCode,
+		ClientMessage: dictionaries.ClientMessage,
+		ErrorCode:     dictionaries.ErrorCode,
 		ErrTrace:      traceErrorMessage,
-		HttpCode:      errDicts.HttpCode,
+		HttpCode:      dictionaries.HttpCode,
 	}
 }
 
@@ -67,15 +67,15 @@ func (g *pkgError) ErrorValidate(
 	commonErrCode string,
 	errMessage interface{},
 ) *Error {
-	errDicts := errorDicts.Errors[commonErrCode]
+	dictionaries := errorDicts.Errors[commonErrCode]
 
 	comErr := Error{
-		ClientMessage: errDicts.ClientMessage,
-		ErrorCode:     errDicts.ErrorCode,
-		HttpCode:      errDicts.HttpCode,
+		ClientMessage: dictionaries.ClientMessage,
+		ErrorCode:     dictionaries.ErrorCode,
+		HttpCode:      dictionaries.HttpCode,
 	}
 	// to check if error in not listed
-	if errDicts == nil {
+	if dictionaries == nil {
 		return &Error{
 			ClientMessage: "Unknown error", // this unknown client message if the error not registered
 			ErrorCode:     commonErrCode,

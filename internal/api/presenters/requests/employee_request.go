@@ -20,7 +20,7 @@ func (r *NewEmployeeRequest) Validate(ctx *gin.Context) error {
 		r,
 		validation.Field(&r.EmpName, validation.Required),
 	); err != nil {
-		return pkg_errors.New().ErrorValidate(api_error.INVALID_PAYLOAD_REQUEST, err.Error())
+		return pkg_errors.New().ErrorValidate(api_error.INVALID_PAYLOAD_REQUEST, err)
 	}
 
 	return nil
