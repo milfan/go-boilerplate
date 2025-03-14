@@ -15,6 +15,7 @@ import (
 	"github.com/milfan/go-boilerplate/configs/config"
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
 	api_controllers "github.com/milfan/go-boilerplate/internal/api/controllers"
+	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,7 +25,9 @@ func NewServer(
 	postgresConn config_postgres.Postgres,
 	logger *logrus.Logger,
 ) *http.Server {
-	apiControllers := api_controllers.LoadControllers(postgresConn)
+	pkgResponse := pkg_response.New()
+
+	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn)
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)

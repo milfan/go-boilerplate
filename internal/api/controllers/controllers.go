@@ -5,6 +5,7 @@ import (
 	web_controller "github.com/milfan/go-boilerplate/internal/api/controllers/web"
 	"github.com/milfan/go-boilerplate/internal/api/repositories"
 	api_usecases "github.com/milfan/go-boilerplate/internal/api/usecases"
+	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
 )
 
 type (
@@ -13,12 +14,15 @@ type (
 	}
 )
 
-func LoadControllers(conn config_postgres.Postgres) Controllers {
+func LoadControllers(
+	pkgResponse pkg_response.IResponse,
+	conn config_postgres.Postgres,
+) Controllers {
 
 	loadRepositories := repositories.LoadRepositories(conn)
 	loadUsecases := api_usecases.LoadUsecases(loadRepositories)
 
 	return Controllers{
-		WebControllers: web_controller.RegisterWebController(loadUsecases),
+		WebControllers: web_controller.RegisterWebController(pkgResponse, loadUsecases),
 	}
 }

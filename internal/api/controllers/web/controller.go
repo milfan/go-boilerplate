@@ -1,6 +1,9 @@
 package api_web_controller
 
-import api_usecases "github.com/milfan/go-boilerplate/internal/api/usecases"
+import (
+	api_usecases "github.com/milfan/go-boilerplate/internal/api/usecases"
+	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
+)
 
 type (
 	WebControllers struct {
@@ -8,9 +11,12 @@ type (
 	}
 )
 
-func RegisterWebController(usecases api_usecases.Usecases) WebControllers {
+func RegisterWebController(
+	pkgResponse pkg_response.IResponse,
+	usecases api_usecases.Usecases,
+) WebControllers {
 
 	return WebControllers{
-		EmployeeController: newEmployeeController(usecases.WebUsecases),
+		EmployeeController: newEmployeeController(pkgResponse, usecases.WebUsecases),
 	}
 }

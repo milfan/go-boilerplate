@@ -8,6 +8,8 @@ import (
 	"github.com/milfan/go-boilerplate/configs/config"
 	"github.com/milfan/go-boilerplate/configs/constants"
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
+	api_helpers "github.com/milfan/go-boilerplate/internal/api/helpers"
+	pkg_errors "github.com/milfan/go-boilerplate/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,6 +37,10 @@ func main() {
 			l.Printf("sql database %s successfuly closed.", dbName)
 		}
 	}(logger, conn.SqlDB, conn.Conn.Name())
+
+	pkg_errors.RegisterDicts(
+		api_helpers.PopulateErrorDicts(),
+	)
 
 	restApiServer := api_rest.NewServer(
 		ginServer,
