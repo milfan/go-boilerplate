@@ -10,16 +10,16 @@ import (
 
 const UNKNOWN_ERROR = "-"
 
-type ValidationError map[string]string
+type ErrorRequest map[string]string
 
 type (
 	Error struct {
-		ErrorCode     string          `json:"code"`
-		HttpCode      int             `json:"httpCode"`
-		ClientMessage string          `json:"message"`
-		ErrTrace      error           `json:"-"`
-		ValidationErr ValidationError `json:"validationErr,omitempty"`
-		Meta          *Meta           `json:"meta,omitempty"`
+		ErrorCode     string       `json:"code"`
+		HttpCode      int          `json:"httpCode"`
+		ClientMessage string       `json:"message"`
+		ErrTrace      error        `json:"-"`
+		ErrRequest    ErrorRequest `json:"errorRequest,omitempty"`
+		Meta          *Meta        `json:"meta,omitempty"`
 	}
 	Meta struct {
 		Timestamp string `json:"timestamp"`
@@ -83,14 +83,14 @@ func (g *pkgError) ErrorValidate(
 		}
 	}
 	if _err, ok := errMessage.(ozzo_validation.Errors); ok {
-		comErr.ValidationErr = buildValidationError(_err)
+		comErr.ErrRequest = buildValidationError(_err)
 	}
 
 	return &comErr
 }
 
-func buildValidationError(err error) ValidationError {
-	var errors ValidationError = map[string]string{}
+func buildValidationError(err error) ErrorRequest {
+	var errors ErrorRequest = map[string]string{}
 
 	errValidate := strings.Split(err.Error(), ";")
 	for _, err := range errValidate {
