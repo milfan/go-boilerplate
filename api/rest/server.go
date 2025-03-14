@@ -24,13 +24,13 @@ func NewServer(
 	postgresConn config_postgres.Postgres,
 	logger *logrus.Logger,
 ) *http.Server {
-	apiControllers := api_controllers.LoadControllers()
+	apiControllers := api_controllers.LoadControllers(postgresConn)
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)
 
 	return &http.Server{
-		Addr:    fmt.Sprintf(":%s", httpConf.GetPort()),
+		Addr:    fmt.Sprintf(":%s", httpConf.Port()),
 		Handler: server.Handler(),
 	}
 }

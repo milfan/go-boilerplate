@@ -8,10 +8,9 @@ type (
 	}
 )
 
-func RegisterWebController() WebControllers {
-	loadUsecases := api_usecases.LoadUsecases()
+func RegisterWebController(usecases api_usecases.Usecases) WebControllers {
 
 	return WebControllers{
-		EmployeeController: newEmployeeController(loadUsecases.WebUsecases),
+		EmployeeController: newEmployeeController(usecases.WebUsecases),
 	}
 }

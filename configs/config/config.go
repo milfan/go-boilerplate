@@ -15,15 +15,15 @@ type Configs struct {
 	postgresConfig PostgresConfig
 }
 
-func (c *Configs) GetAppConfig() *AppConfig {
+func (c *Configs) AppConfig() *AppConfig {
 	return &c.appConfig
 }
 
-func (c *Configs) GetHttpConfig() *HttpConfig {
+func (c *Configs) HttpConfig() *HttpConfig {
 	return &c.httpConfig
 }
 
-func (c *Configs) GetPostgresConfig() *PostgresConfig {
+func (c *Configs) PostgresConfig() *PostgresConfig {
 	return &c.postgresConfig
 }
 
@@ -32,16 +32,16 @@ type AppConfig struct {
 	runMode string
 }
 
-func (c *AppConfig) GetAppName() string {
+func (c *AppConfig) AppName() string {
 	return c.appName
 }
 
-func (c *AppConfig) GetRunMode() string {
+func (c *AppConfig) RunMode() string {
 	return c.runMode
 }
 
 func (c *AppConfig) GetRunModeIsProd() bool {
-	return c.GetRunMode() == "PROD"
+	return c.RunMode() == "PROD"
 }
 
 type HttpConfig struct {
@@ -49,11 +49,11 @@ type HttpConfig struct {
 	httpTimeout int
 }
 
-func (c *HttpConfig) GetPort() string {
+func (c *HttpConfig) Port() string {
 	return c.httpPort
 }
 
-func (c *HttpConfig) GetTimeout() int {
+func (c *HttpConfig) Timeout() int {
 	return c.httpTimeout
 }
 
@@ -63,30 +63,35 @@ type PostgresConfig struct {
 	host     string
 	port     string
 	name     string
+	sslMode  string
 	connPool PostgresConnPoolConf
 }
 
-func (p *PostgresConfig) GetUsername() string {
+func (p *PostgresConfig) Username() string {
 	return p.username
 }
 
-func (p *PostgresConfig) GetPassword() string {
+func (p *PostgresConfig) Password() string {
 	return p.password
 }
 
-func (p *PostgresConfig) GetHost() string {
+func (p *PostgresConfig) Host() string {
 	return p.host
 }
 
-func (p *PostgresConfig) GetPort() string {
+func (p *PostgresConfig) Port() string {
 	return p.port
 }
 
-func (p *PostgresConfig) GetName() string {
+func (p *PostgresConfig) Name() string {
 	return p.name
 }
 
-func (p *PostgresConfig) GetConnPool() *PostgresConnPoolConf {
+func (p *PostgresConfig) SSLMode() string {
+	return p.sslMode
+}
+
+func (p *PostgresConfig) ConnPool() *PostgresConnPoolConf {
 	return &p.connPool
 }
 
@@ -97,19 +102,19 @@ type PostgresConnPoolConf struct {
 	maxLifeTimeConnection  int
 }
 
-func (c *PostgresConnPoolConf) GetMaxOpenConnection() int {
+func (c *PostgresConnPoolConf) MaxOpenConnection() int {
 	return c.maxOpenConnection
 }
 
-func (c *PostgresConnPoolConf) GetMaxIddleConnection() int {
+func (c *PostgresConnPoolConf) MaxIddleConnection() int {
 	return c.maxIddleConnection
 }
 
-func (c *PostgresConnPoolConf) GetMaxIddleTimeConnection() int {
+func (c *PostgresConnPoolConf) MaxIddleTimeConnection() int {
 	return c.maxIddleTimeConnection
 }
 
-func (c *PostgresConnPoolConf) GetMaxLifeTimeConnection() int {
+func (c *PostgresConnPoolConf) MaxLifeTimeConnection() int {
 	return c.maxLifeTimeConnection
 }
 

@@ -26,11 +26,11 @@ func Connect(
 ) *Postgres {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		postgresConf.GetHost(),
-		postgresConf.GetUsername(),
-		postgresConf.GetPassword(),
-		postgresConf.GetName(),
-		postgresConf.GetPort(),
+		postgresConf.Host(),
+		postgresConf.Username(),
+		postgresConf.Password(),
+		postgresConf.Name(),
+		postgresConf.Port(),
 	)
 
 	loggerConf := gorm_logger.Config{
@@ -65,20 +65,20 @@ func Connect(
 		logger.Fatalf("database err: %s", err)
 		return nil
 	}
-	if postgresConf.GetConnPool().GetMaxOpenConnection() > 0 {
-		sqlDB.SetMaxOpenConns(postgresConf.GetConnPool().GetMaxOpenConnection())
+	if postgresConf.ConnPool().MaxOpenConnection() > 0 {
+		sqlDB.SetMaxOpenConns(postgresConf.ConnPool().MaxOpenConnection())
 	}
 
-	if postgresConf.GetConnPool().GetMaxIddleConnection() > 0 {
-		sqlDB.SetMaxIdleConns(postgresConf.GetConnPool().GetMaxIddleConnection())
+	if postgresConf.ConnPool().MaxIddleConnection() > 0 {
+		sqlDB.SetMaxIdleConns(postgresConf.ConnPool().MaxIddleConnection())
 	}
 
-	if postgresConf.GetConnPool().GetMaxIddleTimeConnection() > 0 {
-		sqlDB.SetConnMaxIdleTime(time.Duration(postgresConf.GetConnPool().GetMaxIddleTimeConnection()) * time.Second)
+	if postgresConf.ConnPool().MaxIddleTimeConnection() > 0 {
+		sqlDB.SetConnMaxIdleTime(time.Duration(postgresConf.ConnPool().MaxIddleTimeConnection()) * time.Second)
 	}
 
-	if postgresConf.GetConnPool().GetMaxLifeTimeConnection() > 0 {
-		sqlDB.SetConnMaxLifetime(time.Duration(postgresConf.GetConnPool().GetMaxLifeTimeConnection()) * time.Second)
+	if postgresConf.ConnPool().MaxLifeTimeConnection() > 0 {
+		sqlDB.SetConnMaxLifetime(time.Duration(postgresConf.ConnPool().MaxLifeTimeConnection()) * time.Second)
 	}
 
 	err = sqlDB.Ping()

@@ -1,6 +1,6 @@
 include .env
 
-export DATABASE_URL ?= sqlserver://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/?database=$(DB_NAME)
+export DATABASE_URL ?= postgres://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL_MODE)
 
 bin:
 	@mkdir -p bin

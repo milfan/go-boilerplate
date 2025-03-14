@@ -15,15 +15,15 @@ func main() {
 	logger := logrus.New()
 	conf := config.LoadConfig()
 
-	if conf.GetAppConfig().GetRunMode() != constants.DEVELOPMENT {
+	if conf.AppConfig().RunMode() != constants.DEVELOPMENT {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	ginServer := gin.Default()
 	ginServer.Use(gin.Recovery())
 
 	conn := config_postgres.Connect(
-		*conf.GetPostgresConfig(),
-		*conf.GetAppConfig(),
+		*conf.PostgresConfig(),
+		*conf.AppConfig(),
 		logger,
 	)
 	// gracefully close connection to persistence storage
@@ -38,7 +38,7 @@ func main() {
 
 	restApiServer := api_rest.NewServer(
 		ginServer,
-		*conf.GetHttpConfig(),
+		*conf.HttpConfig(),
 		*conn,
 		logger,
 	)

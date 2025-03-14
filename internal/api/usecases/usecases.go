@@ -1,6 +1,7 @@
 package api_usecases
 
 import (
+	"github.com/milfan/go-boilerplate/internal/api/repositories"
 	api_web_usecases "github.com/milfan/go-boilerplate/internal/api/usecases/web"
 )
 
@@ -10,8 +11,10 @@ type (
 	}
 )
 
-func LoadUsecases() Usecases {
+func LoadUsecases(
+	repo repositories.Repositories,
+) Usecases {
 	return Usecases{
-		WebUsecases: api_web_usecases.RegisterWebUsecases(),
+		WebUsecases: api_web_usecases.RegisterWebUsecases(repo),
 	}
 }

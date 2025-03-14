@@ -25,8 +25,8 @@ func main() {
 	conf := config.LoadConfig()
 
 	postgres := config_postgres.Connect(
-		*conf.GetPostgresConfig(),
-		*conf.GetAppConfig(),
+		*conf.PostgresConfig(),
+		*conf.AppConfig(),
 		logger,
 	)
 	if postgres != nil {

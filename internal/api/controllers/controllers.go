@@ -1,6 +1,11 @@
 package api_controllers
 
-import web_controller "github.com/milfan/go-boilerplate/internal/api/controllers/web"
+import (
+	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
+	web_controller "github.com/milfan/go-boilerplate/internal/api/controllers/web"
+	"github.com/milfan/go-boilerplate/internal/api/repositories"
+	api_usecases "github.com/milfan/go-boilerplate/internal/api/usecases"
+)
 
 type (
 	Controllers struct {
@@ -8,9 +13,12 @@ type (
 	}
 )
 
-func LoadControllers() Controllers {
+func LoadControllers(conn config_postgres.Postgres) Controllers {
+
+	loadRepositories := repositories.LoadRepositories(conn)
+	loadUsecases := api_usecases.LoadUsecases(loadRepositories)
 
 	return Controllers{
-		WebControllers: web_controller.RegisterWebController(),
+		WebControllers: web_controller.RegisterWebController(loadUsecases),
 	}
 }
