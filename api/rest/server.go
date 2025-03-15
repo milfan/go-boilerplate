@@ -31,6 +31,7 @@ func NewServer(
 	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
 
 	server.Use(middleware.CORSMiddleware())
+	server.Use(middleware.GatherRequestData(pkgResponse))
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)
