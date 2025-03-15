@@ -27,10 +27,15 @@ func NewServer(
 	logger *logrus.Logger,
 ) *http.Server {
 	pkgResponse := pkg_response.New()
-
+	httpTimeout := time.Duration(httpConf.Timeout()) * time.Second
 	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
 
 	server.Use(middleware.CORSMiddleware())
+	server.Use(middleware.RequestTimeoutMiddleware(
+		httpTimeout,
+		pkgResponse,
+		logger,
+	))
 	server.Use(middleware.GatherRequestData(pkgResponse))
 
 	rest_routes.DefaultRoute(server)

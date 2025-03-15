@@ -27,7 +27,7 @@ func GatherRequestData(
 			body, _ := io.ReadAll(ctx.Request.Body)
 			if len(body) > 0 {
 				if err := json.Unmarshal(body, &requestData); err != nil {
-					commErr := pkg_errors.New().ErrorValidate(api_error.INVALID_PAYLOAD_REQUEST, err)
+					commErr := pkg_errors.New().Error(api_error.INVALID_PAYLOAD_REQUEST, err)
 					response.HttpError(ctx, commErr)
 					return
 				}
