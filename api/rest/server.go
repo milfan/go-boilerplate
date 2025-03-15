@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	rest_routes "github.com/milfan/go-boilerplate/api/rest/routes"
 	"github.com/milfan/go-boilerplate/configs/config"
+	"github.com/milfan/go-boilerplate/configs/middleware"
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
 	api_controllers "github.com/milfan/go-boilerplate/internal/api/controllers"
 	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
@@ -28,6 +29,8 @@ func NewServer(
 	pkgResponse := pkg_response.New()
 
 	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
+
+	server.Use(middleware.CORSMiddleware())
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)
