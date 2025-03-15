@@ -7,6 +7,7 @@ import (
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
 	"github.com/milfan/go-boilerplate/internal/api/entities"
 	"github.com/milfan/go-boilerplate/internal/api/models"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -14,7 +15,8 @@ type (
 		Create(ctx context.Context, entity entities.Employee) error
 	}
 	employeeRepository struct {
-		conn config_postgres.Postgres
+		conn   config_postgres.Postgres
+		logger *logrus.Logger
 	}
 )
 
@@ -49,8 +51,10 @@ func (r *employeeRepository) Create(ctx context.Context, entity entities.Employe
 
 func newEmployeeRepository(
 	conn config_postgres.Postgres,
+	logger *logrus.Logger,
 ) IEmployeeRepository {
 	return &employeeRepository{
-		conn: conn,
+		conn:   conn,
+		logger: logger,
 	}
 }

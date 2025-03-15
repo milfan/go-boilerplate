@@ -14,7 +14,9 @@ go.work
 bin/
 tmp/
 logs
+app_logs
 /logs
+/app_logs
 _obj
 _test
 

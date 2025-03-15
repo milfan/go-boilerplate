@@ -30,6 +30,7 @@ func (c *Configs) PostgresConfig() *PostgresConfig {
 type AppConfig struct {
 	appName string
 	runMode string
+	withLog bool
 }
 
 func (c *AppConfig) AppName() string {
@@ -38,6 +39,10 @@ func (c *AppConfig) AppName() string {
 
 func (c *AppConfig) RunMode() string {
 	return c.runMode
+}
+
+func (c *AppConfig) WithLog() bool {
+	return c.withLog
 }
 
 func (c *AppConfig) GetRunModeIsProd() bool {
@@ -146,6 +151,12 @@ func LoadConfig() *Configs {
 	appConfig := AppConfig{
 		appName: osGetenv("APP_NAME"),
 		runMode: osGetenv("RUN_MODE"),
+		withLog: false,
+	}
+
+	getWithLog, err := strconv.ParseBool(osGetenv("WITH_LOG"))
+	if err == nil {
+		appConfig.withLog = getWithLog
 	}
 
 	portDefault := "8080"

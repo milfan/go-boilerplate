@@ -1,6 +1,9 @@
 package api_web_usecases
 
-import "github.com/milfan/go-boilerplate/internal/api/repositories"
+import (
+	"github.com/milfan/go-boilerplate/internal/api/repositories"
+	"github.com/sirupsen/logrus"
+)
 
 type (
 	WebUsecases struct {
@@ -10,8 +13,9 @@ type (
 
 func RegisterWebUsecases(
 	repo repositories.Repositories,
+	logger *logrus.Logger,
 ) WebUsecases {
 	return WebUsecases{
-		EmployeeUsecases: newEmployeeUsecase(repo.EmployeeRepositories),
+		EmployeeUsecases: newEmployeeUsecase(logger, repo.EmployeeRepositories),
 	}
 }

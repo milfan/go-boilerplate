@@ -27,7 +27,7 @@ func NewServer(
 ) *http.Server {
 	pkgResponse := pkg_response.New()
 
-	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn)
+	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)
