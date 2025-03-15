@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	api_rest "github.com/milfan/go-boilerplate/api/rest"
@@ -27,17 +26,18 @@ func main() {
 	ginServer := gin.Default()
 	ginServer.Use(gin.Recovery())
 
-	fmt.Println("With log ", conf.AppConfig().WithLog())
 	// logger setup
 	if conf.AppConfig().WithLog() {
-		m := make(map[string]interface{})
-		m["env"] = conf.AppConfig().RunMode()
-		m["service"] = conf.AppConfig().AppName()
-		logger = pkg_log.New(
-			pkg_log.LogName(conf.AppConfig().AppName()),
-			pkg_log.IsProduction(isProd),
-			pkg_log.LogAdditionalFields(m),
-		)
+		logger = pkg_log.New().
+			WithLogName(conf.AppConfig().AppName()).
+			WithLogAdditionalFields(
+				map[string]interface{}{
+					"env":     conf.AppConfig().RunMode(),
+					"service": conf.AppConfig().AppName(),
+				},
+			).
+			ForProduction(isProd).
+			Logger()
 	}
 
 	conn := config_postgres.Connect(
