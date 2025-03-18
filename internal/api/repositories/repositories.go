@@ -2,7 +2,7 @@ package repositories
 
 import (
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
-	"github.com/sirupsen/logrus"
+	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 )
 
 type (
@@ -13,9 +13,9 @@ type (
 
 func LoadRepositories(
 	conn config_postgres.Postgres,
-	logger *logrus.Logger,
+	appLogger *pkg_log.AppLogger,
 ) Repositories {
 	return Repositories{
-		EmployeeRepositories: newEmployeeRepository(conn, logger),
+		EmployeeRepositories: newEmployeeRepository(conn, appLogger),
 	}
 }

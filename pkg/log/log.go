@@ -1,6 +1,7 @@
 package pkg_log
 
 import (
+	"fmt"
 	"path"
 	"runtime"
 	"strings"
@@ -16,6 +17,7 @@ const Default = "default"
 type AppLogger struct {
 	logger       *logrus.Logger
 	logFileName  string
+	isApiLog     bool
 	isProduction bool
 	fields       map[string]interface{}
 }
@@ -38,8 +40,13 @@ func (l *AppLogger) WithLogAdditionalFields(fields map[string]interface{}) *AppL
 	return l
 }
 
-func (l *AppLogger) ForProduction(isProd bool) *AppLogger {
-	l.isProduction = isProd
+func (l *AppLogger) ForAPILogs() *AppLogger {
+	l.isApiLog = true
+	return l
+}
+
+func (l *AppLogger) ForProduction() *AppLogger {
+	l.isProduction = true
 	return l
 }
 
@@ -80,38 +87,44 @@ func (l *AppLogger) Logger() *logrus.Logger {
 		})
 	}
 
-	if !l.isProduction {
-		logFilename := []string{
-			time.Now().UTC().Format("20060102"),
-		}
-		if l.logFileName != "" {
-			logFilename = append(logFilename, l.logFileName)
-		}
-
-		rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
-			Filename:   "app_logs/" + strings.Join(logFilename, "_"),
-			MaxSize:    50, // megabytes
-			MaxBackups: 3,
-			MaxAge:     28, //days
-			Level:      logrus.TraceLevel,
-			Formatter: &logrus.JSONFormatter{
-				TimestampFormat: time.RFC3339,
-				CallerPrettyfier: func(f *runtime.Frame) (string, string) {
-					s := strings.Split(f.Function, ".")
-					funcname := s[len(s)-1]
-					_, filename := path.Split(f.File)
-					return funcname, filename
-				},
-			},
-		})
-
-		if err != nil {
-			l.logger.Fatalf("Failed to initialize file rotate hook: %v", err)
-		}
-
-		l.logger.AddHook(rotateFileHook)
+	logFilename := []string{
+		time.Now().UTC().Format("20060102"),
 	}
+	if l.logFileName != "" {
+		logFilename = append(logFilename, l.logFileName)
+	}
+
+	defaultFilename := "app_logs"
+	if l.isApiLog {
+		defaultFilename = "api_logs"
+	}
+	filenameHook := fmt.Sprintf("%s/%s", defaultFilename, strings.Join(logFilename, "_"))
+
+	rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
+		Filename:   filenameHook,
+		MaxSize:    50, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28, //days
+		Level:      logrus.TraceLevel,
+		Formatter: &logrus.JSONFormatter{
+			TimestampFormat: time.RFC3339,
+			CallerPrettyfier: func(f *runtime.Frame) (string, string) {
+				s := strings.Split(f.Function, ".")
+				funcname := s[len(s)-1]
+				_, filename := path.Split(f.File)
+				return funcname, filename
+			},
+		},
+	})
+
+	if err != nil {
+		l.logger.Fatalf("Failed to initialize file rotate hook: %v", err)
+	}
+
 	l.logger.AddHook(&DefaultFieldHook{l.fields})
+	l.logger.AddHook(rotateFileHook)
+
+	// l.logger.AddHook(&DefaultFieldHook{l.fields})
 
 	return l.logger
 }

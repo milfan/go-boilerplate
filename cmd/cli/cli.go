@@ -9,6 +9,7 @@ import (
 	cli_command "github.com/milfan/go-boilerplate/internal/cli/commands"
 	internal_cli_repositories "github.com/milfan/go-boilerplate/internal/cli/repositories"
 	internal_cli_usecases "github.com/milfan/go-boilerplate/internal/cli/usecases"
+	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -21,8 +22,16 @@ func main() {
 		panic("Missing argument[1]")
 	}
 
-	logger := logrus.New()
 	conf := config.LoadConfig()
+
+	logger := pkg_log.New().
+		WithLogName(conf.AppConfig().AppName()).
+		WithLogAdditionalFields(
+			map[string]interface{}{
+				"env":     conf.AppConfig().RunMode(),
+				"service": conf.AppConfig().AppName(),
+			},
+		)
 
 	postgres := config_postgres.Connect(
 		*conf.PostgresConfig(),
@@ -37,7 +46,7 @@ func main() {
 			} else {
 				l.Printf("sql database %s successfuly closed.", dbName)
 			}
-		}(logger, postgres.SqlDB, postgres.Conn.Name())
+		}(logger.Logger(), postgres.SqlDB, postgres.Conn.Name())
 	}
 
 	repositories := internal_cli_repositories.LoadCliRepositories(postgres.Conn)

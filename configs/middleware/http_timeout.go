@@ -8,13 +8,11 @@ import (
 	api_error "github.com/milfan/go-boilerplate/internal/api/errors"
 	pkg_errors "github.com/milfan/go-boilerplate/pkg/errors"
 	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
-	"github.com/sirupsen/logrus"
 )
 
 func RequestTimeoutMiddleware(
 	timeout time.Duration,
 	response pkg_response.IResponse,
-	logger *logrus.Logger,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Create a new context with a timeout

@@ -3,7 +3,7 @@ package api_usecases
 import (
 	"github.com/milfan/go-boilerplate/internal/api/repositories"
 	api_web_usecases "github.com/milfan/go-boilerplate/internal/api/usecases/web"
-	"github.com/sirupsen/logrus"
+	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 )
 
 type (
@@ -14,9 +14,9 @@ type (
 
 func LoadUsecases(
 	repo repositories.Repositories,
-	logger *logrus.Logger,
+	appLogger *pkg_log.AppLogger,
 ) Usecases {
 	return Usecases{
-		WebUsecases: api_web_usecases.RegisterWebUsecases(repo, logger),
+		WebUsecases: api_web_usecases.RegisterWebUsecases(repo, appLogger),
 	}
 }

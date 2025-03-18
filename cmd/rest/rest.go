@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	logger := logrus.New()
+	logger := pkg_log.New()
 	conf := config.LoadConfig()
 
 	isProd := false
@@ -35,9 +35,11 @@ func main() {
 					"env":     conf.AppConfig().RunMode(),
 					"service": conf.AppConfig().AppName(),
 				},
-			).
-			ForProduction(isProd).
-			Logger()
+			)
+
+		if isProd {
+			logger.ForProduction()
+		}
 	}
 
 	conn := config_postgres.Connect(
@@ -54,7 +56,7 @@ func main() {
 		} else {
 			l.Printf("sql database %s successfuly closed.", dbName)
 		}
-	}(logger, conn.SqlDB, conn.Conn.Name())
+	}(logger.Logger(), conn.SqlDB, conn.Conn.Name())
 
 	pkg_errors.RegisterDicts(
 		api_helpers.PopulateErrorDicts(),

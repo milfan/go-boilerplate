@@ -6,7 +6,7 @@ import (
 	"github.com/milfan/go-boilerplate/internal/api/entities"
 	"github.com/milfan/go-boilerplate/internal/api/presenters/requests"
 	"github.com/milfan/go-boilerplate/internal/api/repositories"
-	"github.com/sirupsen/logrus"
+	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 )
 
 type (
@@ -14,8 +14,8 @@ type (
 		Register(ctx context.Context, req requests.NewEmployeeRequest) error
 	}
 	employeeUsecase struct {
-		logger *logrus.Logger
-		repo   repositories.IEmployeeRepository
+		appLogger *pkg_log.AppLogger
+		repo      repositories.IEmployeeRepository
 	}
 )
 
@@ -34,11 +34,11 @@ func (u *employeeUsecase) Register(ctx context.Context, req requests.NewEmployee
 }
 
 func newEmployeeUsecase(
-	logger *logrus.Logger,
+	appLogger *pkg_log.AppLogger,
 	repo repositories.IEmployeeRepository,
 ) IEmployeeUsecase {
 	return &employeeUsecase{
-		logger: logger,
-		repo:   repo,
+		appLogger: appLogger,
+		repo:      repo,
 	}
 }
