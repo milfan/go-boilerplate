@@ -20,12 +20,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func NewServer(
+type Server struct {
+	httpServer *http.Server
+}
+
+func New(
 	server *gin.Engine,
 	httpConf config.HttpConfig,
 	postgresConn config_postgres.Postgres,
 	logger *logrus.Logger,
-) *http.Server {
+) *Server {
 	pkgResponse := pkg_response.New()
 	httpTimeout := time.Duration(httpConf.Timeout()) * time.Second
 	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
@@ -41,21 +45,25 @@ func NewServer(
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)
 
-	return &http.Server{
-		Addr:    fmt.Sprintf(":%s", httpConf.Port()),
-		Handler: server.Handler(),
+	serv := Server{
+		httpServer: &http.Server{
+			Addr:    fmt.Sprintf(":%s", httpConf.Port()),
+			Handler: server.Handler(),
+		},
 	}
+
+	return &serv
 }
 
-func StartServer(srv *http.Server) {
+func (s *Server) Start() {
 	go func() {
 		// service connections
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
 
-	gracefullShutdown(srv)
+	gracefullShutdown(s.httpServer)
 }
 
 func gracefullShutdown(srv *http.Server) {

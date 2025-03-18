@@ -60,12 +60,11 @@ func main() {
 		api_helpers.PopulateErrorDicts(),
 	)
 
-	restApiServer := api_rest.NewServer(
+	api_rest.New(
 		ginServer,
 		*conf.HttpConfig(),
 		*conn,
 		logger,
-	)
-	api_rest.StartServer(restApiServer)
+	).Start()
 
 }
