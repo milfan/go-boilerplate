@@ -31,12 +31,14 @@ func main() {
 				"env":     conf.AppConfig().RunMode(),
 				"service": conf.AppConfig().AppName(),
 			},
-		)
+		).ForCliLogs().Use()
+
+	appLogger := logger.Use()
 
 	postgres := config_postgres.Connect(
 		*conf.PostgresConfig(),
 		*conf.AppConfig(),
-		logger,
+		appLogger.Logger(),
 	)
 	if postgres != nil {
 		defer func(l *logrus.Logger, sqlDB *sql.DB, dbName string) {
@@ -46,7 +48,7 @@ func main() {
 			} else {
 				l.Printf("sql database %s successfuly closed.", dbName)
 			}
-		}(logger.Logger(), postgres.SqlDB, postgres.Conn.Name())
+		}(appLogger.Logger(), postgres.SqlDB, postgres.Conn.Name())
 	}
 
 	repositories := internal_cli_repositories.LoadCliRepositories(postgres.Conn)

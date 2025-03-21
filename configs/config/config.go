@@ -12,6 +12,7 @@ var osGetenv = os.Getenv
 type Configs struct {
 	appConfig      AppConfig
 	httpConfig     HttpConfig
+	grpcConfig     GrpcConfig
 	postgresConfig PostgresConfig
 }
 
@@ -21,6 +22,10 @@ func (c *Configs) AppConfig() *AppConfig {
 
 func (c *Configs) HttpConfig() *HttpConfig {
 	return &c.httpConfig
+}
+
+func (c *Configs) GrpcConfig() *GrpcConfig {
+	return &c.grpcConfig
 }
 
 func (c *Configs) PostgresConfig() *PostgresConfig {
@@ -50,16 +55,24 @@ func (c *AppConfig) GetRunModeIsProd() bool {
 }
 
 type HttpConfig struct {
-	httpPort    string
-	httpTimeout int
+	port    string
+	timeout int
 }
 
 func (c *HttpConfig) Port() string {
-	return c.httpPort
+	return c.port
 }
 
 func (c *HttpConfig) Timeout() int {
-	return c.httpTimeout
+	return c.timeout
+}
+
+type GrpcConfig struct {
+	port string
+}
+
+func (c *GrpcConfig) Port() string {
+	return c.port
 }
 
 type PostgresConfig struct {
@@ -166,12 +179,12 @@ func LoadConfig() *Configs {
 	}
 
 	httConfig := HttpConfig{
-		httpPort:    portDefault,
-		httpTimeout: 120, // default in second
+		port:    portDefault,
+		timeout: 120, // default in second
 	}
 	httpTimeout, err := strconv.Atoi(osGetenv("HTTP_TIMEOUT"))
 	if err == nil {
-		httConfig.httpTimeout = httpTimeout
+		httConfig.timeout = httpTimeout
 	}
 
 	postgresConfig := PostgresConfig{
@@ -183,9 +196,14 @@ func LoadConfig() *Configs {
 		connPool: setConnectionPool(),
 	}
 
+	grpcConfig := GrpcConfig{
+		port: osGetenv("GRPC_PORT"),
+	}
+
 	return &Configs{
 		appConfig:      appConfig,
 		httpConfig:     httConfig,
+		grpcConfig:     grpcConfig,
 		postgresConfig: postgresConfig,
 	}
 }

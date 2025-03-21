@@ -2,29 +2,23 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+	"net"
 
-	"github.com/gin-gonic/gin"
-	api_rest "github.com/milfan/go-boilerplate/api/rest"
+	api_grpc "github.com/milfan/go-boilerplate/api/grpc"
 	"github.com/milfan/go-boilerplate/configs/config"
-	"github.com/milfan/go-boilerplate/configs/constants"
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
 	api_helpers "github.com/milfan/go-boilerplate/internal/api/helpers"
 	pkg_errors "github.com/milfan/go-boilerplate/pkg/errors"
 	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 )
 
 func main() {
 	logger := pkg_log.New()
 	conf := config.LoadConfig()
-
-	isProd := false
-	if conf.AppConfig().RunMode() != constants.DEVELOPMENT {
-		gin.SetMode(gin.ReleaseMode)
-		isProd = true
-	}
-	ginServer := gin.Default()
-	ginServer.Use(gin.Recovery())
 
 	// logger setup
 	if conf.AppConfig().WithLog() {
@@ -35,11 +29,7 @@ func main() {
 					"env":     conf.AppConfig().RunMode(),
 					"service": conf.AppConfig().AppName(),
 				},
-			).ForAPILogs()
-
-		if isProd {
-			logger.ForProduction()
-		}
+			).ForGrpcLogs()
 	}
 
 	appLogger := logger.Use()
@@ -64,11 +54,14 @@ func main() {
 		api_helpers.PopulateErrorDicts(),
 	)
 
-	api_rest.New(
-		ginServer,
-		*conf.HttpConfig(),
-		*conn,
-		appLogger.Logger(),
-	).Start()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", conf.GrpcConfig().Port()))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	defer lis.Close()
 
+	grpcServer := grpc.NewServer()
+
+	apiRpc := api_grpc.New(grpcServer, lis, appLogger.Logger())
+	apiRpc.Start()
 }

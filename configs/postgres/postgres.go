@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/milfan/go-boilerplate/configs/config"
-	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gorm_logger "gorm.io/gorm/logger"
@@ -22,7 +22,7 @@ type Postgres struct {
 func Connect(
 	postgresConf config.PostgresConfig,
 	appConf config.AppConfig,
-	appLogger *pkg_log.AppLogger,
+	logger *logrus.Logger,
 ) *Postgres {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
@@ -62,7 +62,7 @@ func Connect(
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		appLogger.Logger().Fatalf("database err: %s", err)
+		logger.Fatalf("database err: %s", err)
 		return nil
 	}
 	if postgresConf.ConnPool().MaxOpenConnection() > 0 {
@@ -86,7 +86,7 @@ func Connect(
 		panic(err)
 	}
 
-	appLogger.Logger().Printf("sql database connection %s success", db.Name())
+	logger.Printf("sql database connection %s success", db.Name())
 
 	return &Postgres{
 		Conn:  db,

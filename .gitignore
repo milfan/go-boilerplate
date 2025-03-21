@@ -13,14 +13,20 @@ go.work
 # Folders
 bin/
 tmp/
-logs
-app_logs
-api_logs
-/logs
-/app_logs
-/api_logs
 _obj
 _test
+
+#logs
+logs
+log_app
+log_api
+log_grpc
+/logs
+/log_app
+/log_api
+/log_grpc
+
+
 
 # Dependency directories (remove the comment below to include it)
 vendor/

@@ -16,8 +16,8 @@ import (
 	"github.com/milfan/go-boilerplate/configs/middleware"
 	config_postgres "github.com/milfan/go-boilerplate/configs/postgres"
 	api_controllers "github.com/milfan/go-boilerplate/internal/api/controllers"
-	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
@@ -28,18 +28,19 @@ func New(
 	server *gin.Engine,
 	httpConf config.HttpConfig,
 	postgresConn config_postgres.Postgres,
-	appLogger *pkg_log.AppLogger,
+	logger *logrus.Logger,
 ) *Server {
+
 	pkgResponse := pkg_response.New()
 	httpTimeout := time.Duration(httpConf.Timeout()) * time.Second
-	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, appLogger)
+	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
 
 	server.Use(middleware.CORSMiddleware())
 	server.Use(middleware.RequestTimeoutMiddleware(
 		httpTimeout,
 		pkgResponse,
 	))
-	server.Use(middleware.GatherRequestData(pkgResponse, appLogger))
+	server.Use(middleware.GatherRequestData(pkgResponse, logger))
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)

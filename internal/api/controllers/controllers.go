@@ -5,8 +5,8 @@ import (
 	web_controller "github.com/milfan/go-boilerplate/internal/api/controllers/web"
 	"github.com/milfan/go-boilerplate/internal/api/repositories"
 	api_usecases "github.com/milfan/go-boilerplate/internal/api/usecases"
-	pkg_log "github.com/milfan/go-boilerplate/pkg/log"
 	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -18,11 +18,11 @@ type (
 func LoadControllers(
 	pkgResponse pkg_response.IResponse,
 	conn config_postgres.Postgres,
-	appLogger *pkg_log.AppLogger,
+	logger *logrus.Logger,
 ) Controllers {
 
-	loadRepositories := repositories.LoadRepositories(conn, appLogger)
-	loadUsecases := api_usecases.LoadUsecases(loadRepositories, appLogger)
+	loadRepositories := repositories.LoadRepositories(conn, logger)
+	loadUsecases := api_usecases.LoadUsecases(loadRepositories, logger)
 
 	return Controllers{
 		WebControllers: web_controller.RegisterWebController(pkgResponse, loadUsecases),

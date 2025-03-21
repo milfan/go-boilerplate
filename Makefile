@@ -45,6 +45,13 @@ run-dev:
 run-rest:
 	bin/air -d --build.cmd "go build -o tmp/rest cmd/rest/rest.go" --build.bin "tmp/rest"
 
+run-rpc:
+	bin/air -d --build.cmd "go build -o tmp/grpc cmd/grpc/grpc.go" --build.bin "tmp/grpc"
+
+# make gen-proto domain="employee"
+gen-proto:
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative pkg/grpc/${domain}/*
+
 .PHONY: 
 	formatting 
 	gen-doc
@@ -57,3 +64,5 @@ run-rest:
 	seed-down
 	run-dev
 	run-rest
+	run-rpc
+	gen-proto

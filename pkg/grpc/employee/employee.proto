@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pkg_proto_employee;
+option go_package = "github.com/milfan/go-boilerplate/pkg/grpc/employee/pkg_grpc_employee";
+
+service EmployeeGrpc {
+  rpc DetailEmployee (DetailEmployeeRequest) returns (DetailEmployeeResponse);
+}
+
+message DetailEmployeeRequest {
+  string empCode = 1;
+}
+
+message DetailEmployeeResponse {
+  string empCode = 1;
+  string empName = 2;
+}

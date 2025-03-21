@@ -18,6 +18,8 @@ type AppLogger struct {
 	logger       *logrus.Logger
 	logFileName  string
 	isApiLog     bool
+	isCliLog     bool
+	isGrpcLog    bool
 	isProduction bool
 	fields       map[string]interface{}
 }
@@ -45,13 +47,22 @@ func (l *AppLogger) ForAPILogs() *AppLogger {
 	return l
 }
 
+func (l *AppLogger) ForCliLogs() *AppLogger {
+	l.isCliLog = true
+	return l
+}
+
+func (l *AppLogger) ForGrpcLogs() *AppLogger {
+	l.isGrpcLog = true
+	return l
+}
+
 func (l *AppLogger) ForProduction() *AppLogger {
 	l.isProduction = true
 	return l
 }
 
-func (l *AppLogger) Logger() *logrus.Logger {
-
+func (l *AppLogger) Use() *AppLogger {
 	var level logrus.Level
 
 	// if it is production will output warn and error level
@@ -94,10 +105,17 @@ func (l *AppLogger) Logger() *logrus.Logger {
 		logFilename = append(logFilename, l.logFileName)
 	}
 
-	defaultFilename := "app_logs"
+	defaultFilename := "log_app"
 	if l.isApiLog {
-		defaultFilename = "api_logs"
+		defaultFilename = "log_api"
 	}
+	if l.isGrpcLog {
+		defaultFilename = "log_grpc"
+	}
+	if l.isCliLog {
+		defaultFilename = "log_cli"
+	}
+
 	filenameHook := fmt.Sprintf("%s/%s", defaultFilename, strings.Join(logFilename, "_"))
 
 	rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
@@ -124,7 +142,9 @@ func (l *AppLogger) Logger() *logrus.Logger {
 	l.logger.AddHook(&DefaultFieldHook{l.fields})
 	l.logger.AddHook(rotateFileHook)
 
-	// l.logger.AddHook(&DefaultFieldHook{l.fields})
+	return l
+}
 
+func (l *AppLogger) Logger() *logrus.Logger {
 	return l.logger
 }
