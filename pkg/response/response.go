@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	pkg_constants "github.com/milfan/go-boilerplate/pkg/constants"
 	pkg_errors "github.com/milfan/go-boilerplate/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type Meta struct {
@@ -35,7 +36,9 @@ type IResponse interface {
 	BuildMeta(page int, perPage int, count int64) *Meta
 }
 
-type response struct{}
+type response struct {
+	logger *logrus.Logger
+}
 
 // BuildMeta implements IResponse.
 func (r *response) BuildMeta(page int, perPage int, count int64) *Meta {
@@ -52,11 +55,28 @@ func (r *response) BuildMeta(page int, perPage int, count int64) *Meta {
 // HttpError implements IResponse.
 func (r *response) HttpError(ctx *gin.Context, err error) {
 
+	var (
+		requestID   string
+		headers     interface{}
+		requestData interface{}
+	)
+
 	// get request id from middleware
 	getRequestID, _ := ctx.Get(pkg_constants.REQUEST_ID)
-	var requestID string
 	if getRequestID != nil {
 		requestID = getRequestID.(string)
+	}
+
+	// get request headers from middleware
+	getHeaders, _ := ctx.Get(pkg_constants.REQUEST_HEADER)
+	if getHeaders != nil {
+		headers = getHeaders
+	}
+
+	// get request data from middleware
+	getRequestData, _ := ctx.Get(pkg_constants.REQUEST_DATA)
+	if getRequestData != nil {
+		requestData = getRequestData
 	}
 
 	respError := pkg_errors.New().Error(pkg_errors.UNKNOWN_ERROR, nil)
@@ -72,6 +92,19 @@ func (r *response) HttpError(ctx *gin.Context, err error) {
 	}
 	resp, _ := json.Marshal(respError)
 
+	r.logger.WithFields(map[string]interface{}{
+		"request_id":   requestID,
+		"method":       ctx.Request.Method,
+		"http_status":  respError.HttpCode,
+		"headers":      headers,
+		"client_ip":    ctx.ClientIP(),
+		"user_agent":   ctx.Request.UserAgent(),
+		"request_uri":  ctx.Request.RequestURI,
+		"request_body": requestData,
+		"error_code":   respError.ErrorCode,
+		"trace_error":  respError.ErrTrace.Error(),
+	}).Error(respError.ClientMessage)
+
 	ctx.Writer.Header().Set(pkg_constants.CONTENT_TYPE, pkg_constants.CONTENT_TYPE_JSON)
 	ctx.Writer.WriteHeader(respError.HttpCode)
 	ctx.Writer.Write(resp)
@@ -81,6 +114,30 @@ func (r *response) HttpError(ctx *gin.Context, err error) {
 // HttpJSON implements IResponse.
 func (r *response) HttpJSON(ctx *gin.Context, message string, data interface{}, meta *Meta) {
 
+	var (
+		requestID   string
+		headers     interface{}
+		requestData interface{}
+	)
+
+	// get request id from middleware
+	getRequestID, _ := ctx.Get(pkg_constants.REQUEST_ID)
+	if getRequestID != nil {
+		requestID = getRequestID.(string)
+	}
+
+	// get request headers from middleware
+	getHeaders, _ := ctx.Get(pkg_constants.REQUEST_HEADER)
+	if getHeaders != nil {
+		headers = getHeaders
+	}
+
+	// get request data from middleware
+	getRequestData, _ := ctx.Get(pkg_constants.REQUEST_DATA)
+	if getRequestData != nil {
+		requestData = getRequestData
+	}
+
 	response := ResponseMessage{
 		Message: message,
 		Data:    data,
@@ -88,11 +145,27 @@ func (r *response) HttpJSON(ctx *gin.Context, message string, data interface{}, 
 	}
 	resp, _ := json.Marshal(response)
 
+	r.logger.WithFields(map[string]interface{}{
+		"request_id":       requestID,
+		"method":           ctx.Request.Method,
+		"http_status":      http.StatusOK,
+		"headers":          headers,
+		"client_ip":        ctx.ClientIP(),
+		"user_agent":       ctx.Request.UserAgent(),
+		"request_uri":      ctx.Request.RequestURI,
+		"request_body":     requestData,
+		"request_response": response,
+	}).Info(ctx.Request.URL.Path)
+
 	ctx.Writer.Header().Set(pkg_constants.CONTENT_TYPE, pkg_constants.CONTENT_TYPE_JSON)
 	ctx.Writer.WriteHeader(http.StatusOK)
 	ctx.Writer.Write(resp)
 }
 
-func New() IResponse {
-	return &response{}
+func New(
+	logger *logrus.Logger,
+) IResponse {
+	return &response{
+		logger: logger,
+	}
 }

@@ -2,6 +2,7 @@ package api_mobile_usecases
 
 import (
 	"context"
+	"errors"
 
 	"github.com/milfan/go-boilerplate/internal/api/entities"
 	api_error "github.com/milfan/go-boilerplate/internal/api/errors"
@@ -62,7 +63,7 @@ func (u *orderUsecase) Add(ctx context.Context, req requests.NewOrderRequest) er
 	}
 
 	if len(orderDetails) != len(checkProducts) {
-		return pkg_errors.New().Error(api_error.MISSMATCH_PRODUCT_ID, nil)
+		return pkg_errors.New().Error(api_error.MISSMATCH_PRODUCT_ID, errors.New("miss match product"))
 	}
 
 	if err := u.repo.Add(ctx, *order); err != nil {

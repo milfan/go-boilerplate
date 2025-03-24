@@ -31,7 +31,7 @@ func New(
 	logger *logrus.Logger,
 ) *Server {
 
-	pkgResponse := pkg_response.New()
+	pkgResponse := pkg_response.New(logger)
 	httpTimeout := time.Duration(httpConf.Timeout()) * time.Second
 	apiControllers := api_controllers.LoadControllers(pkgResponse, postgresConn, logger)
 

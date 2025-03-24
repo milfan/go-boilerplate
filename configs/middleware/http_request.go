@@ -45,17 +45,9 @@ func GatherRequestData(
 
 		requestID := uuid.NewString()
 		ctx.Set(pkg_constants.REQUEST_ID, requestID)
-		ctx.Next()
+		ctx.Set(pkg_constants.REQUEST_DATA, requestData)
+		ctx.Set(pkg_constants.REQUEST_HEADER, headers)
 
-		logger.WithFields(map[string]interface{}{
-			"request_id":   requestID,
-			"method":       ctx.Request.Method,
-			"headers":      headers,
-			"status":       ctx.Writer.Status(),
-			"client_ip":    ctx.ClientIP(),
-			"user_agent":   ctx.Request.UserAgent(),
-			"request_uri":  ctx.Request.RequestURI,
-			"request_body": requestData,
-		}).Info(ctx.Request.URL.Path)
+		ctx.Next()
 	}
 }
