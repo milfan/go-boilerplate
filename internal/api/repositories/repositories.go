@@ -7,7 +7,8 @@ import (
 
 type (
 	Repositories struct {
-		EmployeeRepositories IEmployeeRepository
+		ProductRepositories IProductRepository
+		OrderRepositories   IOrdersRepository
 	}
 )
 
@@ -16,6 +17,7 @@ func LoadRepositories(
 	logger *logrus.Logger,
 ) Repositories {
 	return Repositories{
-		EmployeeRepositories: newEmployeeRepository(conn, logger),
+		ProductRepositories: newProductsRepository(conn, logger),
+		OrderRepositories:   newOrdersRepository(conn, logger),
 	}
 }

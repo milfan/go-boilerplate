@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/milfan/go-boilerplate/configs/constants"
 	api_error "github.com/milfan/go-boilerplate/internal/api/errors"
+	pkg_constants "github.com/milfan/go-boilerplate/pkg/constants"
 	pkg_errors "github.com/milfan/go-boilerplate/pkg/errors"
 	pkg_response "github.com/milfan/go-boilerplate/pkg/response"
 	"github.com/sirupsen/logrus"
@@ -42,12 +43,13 @@ func GatherRequestData(
 			headers[key] = values[0] // Log only the first value of each header
 		}
 
+		requestID := uuid.NewString()
+		ctx.Set(pkg_constants.REQUEST_ID, requestID)
 		ctx.Next()
 
 		logger.WithFields(map[string]interface{}{
-			"request_id":   uuid.NewString(),
+			"request_id":   requestID,
 			"method":       ctx.Request.Method,
-			"path":         ctx.Request.URL.Path,
 			"headers":      headers,
 			"status":       ctx.Writer.Status(),
 			"client_ip":    ctx.ClientIP(),

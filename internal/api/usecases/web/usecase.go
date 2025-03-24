@@ -7,7 +7,7 @@ import (
 
 type (
 	WebUsecases struct {
-		EmployeeUsecases IEmployeeUsecase
+		ProductUsecases IProductUsecase
 	}
 )
 
@@ -16,6 +16,6 @@ func RegisterWebUsecases(
 	logger *logrus.Logger,
 ) WebUsecases {
 	return WebUsecases{
-		EmployeeUsecases: newEmployeeUsecase(logger, repo.EmployeeRepositories),
+		ProductUsecases: newProductUsecase(logger, repo.ProductRepositories),
 	}
 }

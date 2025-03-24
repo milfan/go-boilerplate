@@ -7,7 +7,7 @@ import (
 
 type (
 	WebControllers struct {
-		EmployeeController IEmployeeController
+		ProductController IProductController
 	}
 )
 
@@ -17,6 +17,6 @@ func RegisterWebController(
 ) WebControllers {
 
 	return WebControllers{
-		EmployeeController: newEmployeeController(pkgResponse, usecases.WebUsecases),
+		ProductController: newProductController(pkgResponse, usecases.WebUsecases),
 	}
 }

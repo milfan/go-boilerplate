@@ -14,7 +14,7 @@ const (
 	ERROR_DUPLICATE_VALUE   = "SERVICE_NAME-SRV-20004"
 
 	// this section is used to error collection/data empty
-	DATA_EMPLOYEE_EMPTY = "SERVICE_NAME-SRV-22001"
+	MISSMATCH_PRODUCT_ID = "SERVICE_NAME-SRV-22001"
 )
 
 func DataErrorDicts() map[string]*pkg_errors.Error {
@@ -43,9 +43,9 @@ func DataErrorDicts() map[string]*pkg_errors.Error {
 		},
 
 		// this section is used to error collection/data empty
-		DATA_EMPLOYEE_EMPTY: {
-			ClientMessage: "Employee data not found",
-			ErrorCode:     DATA_EMPLOYEE_EMPTY,
+		MISSMATCH_PRODUCT_ID: {
+			ClientMessage: "Some Product not found",
+			ErrorCode:     MISSMATCH_PRODUCT_ID,
 			HttpCode:      http.StatusNotFound,
 		},
 	}

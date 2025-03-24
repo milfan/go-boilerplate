@@ -44,6 +44,7 @@ func New(
 
 	rest_routes.DefaultRoute(server)
 	rest_routes.WebRouteV1(server, apiControllers)
+	rest_routes.MobileRouteV1(server, apiControllers)
 
 	serv := Server{
 		httpServer: &http.Server{
